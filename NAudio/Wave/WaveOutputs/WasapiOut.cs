@@ -117,18 +117,23 @@ namespace NAudio.Wave
                 var waitHandles = new WaitHandle[] { frameEventWaitHandle };
 
                 audioClient.Start();
-
+                var sw = new SpinWait();
                 while (playbackState != PlaybackState.Stopped)
                 {
                     // If using Event Sync, Wait for notification from AudioClient or Sleep half latency
                     int indexHandle = 0;
                     if (isUsingEventSync)
                     {
+                        if (latencyMilliseconds == 0)
+                            sw.SpinOnce();
                         indexHandle = WaitHandle.WaitAny(waitHandles, 3 * latencyMilliseconds, false);
                     }
                     else
                     {
-                        Thread.Sleep(latencyMilliseconds / 2);
+                        if (latencyMilliseconds == 0)
+                            sw.SpinOnce();
+                        else
+                            Thread.Sleep(latencyMilliseconds / 2);
                     }
 
                     // If still playing and notification is ok
@@ -152,7 +157,10 @@ namespace NAudio.Wave
                         }
                     }
                 }
-                Thread.Sleep(latencyMilliseconds / 2);
+                if (latencyMilliseconds == 0)
+                    sw.SpinOnce();
+                else
+                    Thread.Sleep(latencyMilliseconds / 2);
                 audioClient.Stop();
                 if (playbackState == PlaybackState.Stopped)
                 {
