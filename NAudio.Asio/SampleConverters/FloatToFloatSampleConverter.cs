@@ -79,7 +79,7 @@ public sealed class FloatToFloatSampleConverter : SampleConverterBase
         {
             for (int j = 0; j < nbChannels; j++)
             {
-                *samples[j]++ = *inputSamples++;
+                *(samples[j]++) = *inputSamples++;
             }
         }
     }

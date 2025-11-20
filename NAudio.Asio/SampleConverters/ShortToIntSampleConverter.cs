@@ -57,11 +57,12 @@ public sealed class ShortToIntSampleConverter : SampleConverterBase
         int nbChannels, int nbSamples)
     {
         short* inputSamples = (short*)inputInterleavedBuffer;
+        // Use a trick (short instead of int to avoid any convertion from 16Bit to 32Bit)
         short*[] samples = new short*[nbChannels];
         for (int i = 0; i < nbChannels; i++)
         {
             samples[i] = (short*)asioOutputBuffers[i];
-            // 指向32位整数的高16位
+            // Point to upper 16 bits of the 32Bits.
             samples[i]++;
         }
 
@@ -70,7 +71,7 @@ public sealed class ShortToIntSampleConverter : SampleConverterBase
             for (int j = 0; j < nbChannels; j++)
             {
                 *samples[j] = *inputSamples++;
-                samples[j] += 2; // 跳过低16位
+                samples[j] += 2;
             }
         }
     }
