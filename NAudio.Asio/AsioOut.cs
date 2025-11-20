@@ -400,6 +400,8 @@ namespace NAudio.Wave
         /// </summary>
         public int NumberOfInputChannels { get; private set; }
 
+        public AsioDriverExt UnderlineDriver => driver;
+
         /// <summary>
         /// The maximum number of input channels this ASIO driver supports
         /// </summary>
