@@ -49,7 +49,7 @@ public sealed class IntToShortSampleConverter : SampleConverterBase
         int nbChannels, int nbSamples)
     {
         int* inputSamples = (int*)inputInterleavedBuffer;
-        int*[] samples = new int*[nbChannels];
+        int** samples = stackalloc int*[nbChannels];
         for (int i = 0; i < nbChannels; i++)
         {
             samples[i] = (int*)asioOutputBuffers[i];

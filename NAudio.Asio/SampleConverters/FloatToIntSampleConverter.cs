@@ -78,7 +78,7 @@ public sealed class FloatToIntSampleConverter : SampleConverterBase
         int nbChannels, int nbSamples)
     {
         float* inputSamples = (float*)inputInterleavedBuffer;
-        int*[] samples = new int*[nbChannels];
+        int** samples = stackalloc int*[nbChannels];
         for (int i = 0; i < nbChannels; i++)
         {
             samples[i] = (int*)asioOutputBuffers[i];

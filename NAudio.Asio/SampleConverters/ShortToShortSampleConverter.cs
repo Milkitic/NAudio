@@ -50,7 +50,7 @@ public sealed class ShortToShortSampleConverter : SampleConverterBase
     {
         short* inputSamples = (short*)inputInterleavedBuffer;
         // Use a trick (short instead of int to avoid any convertion from 16Bit to 32Bit)
-        short*[] samples = new short*[nbChannels];
+        short** samples = stackalloc short*[nbChannels];
         for (int i = 0; i < nbChannels; i++)
         {
             samples[i] = (short*)asioOutputBuffers[i];

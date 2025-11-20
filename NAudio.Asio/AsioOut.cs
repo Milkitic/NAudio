@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using NAudio.Wave.Asio;
 using System.Threading;
 
@@ -23,6 +24,8 @@ namespace NAudio.Wave
         private PlaybackState playbackState;
         private int nbSamples;
         private byte[] waveBuffer;
+        private GCHandle _waveBufferHandle;
+        private IntPtr _waveBufferPtr;
         private AsioSampleConvertor.SampleConvertor convertor;
         private string driverName;
 
@@ -96,6 +99,11 @@ namespace NAudio.Wave
         /// </summary>
         public void Dispose()
         {
+            if (_waveBufferHandle.IsAllocated)
+            {
+                _waveBufferHandle.Free();
+            }
+
             if (driver != null)
             {
                 if (playbackState != PlaybackState.Stopped)
@@ -301,6 +309,10 @@ namespace NAudio.Wave
             {
                 // make a buffer big enough to read enough from the sourceStream to fill the ASIO buffers
                 waveBuffer = new byte[nbSamples * NumberOfOutputChannels * waveProvider.WaveFormat.BitsPerSample / 8];
+
+                if (_waveBufferHandle.IsAllocated) _waveBufferHandle.Free();
+                _waveBufferHandle = GCHandle.Alloc(waveBuffer, GCHandleType.Pinned);
+                _waveBufferPtr = _waveBufferHandle.AddrOfPinnedObject();
             }
         }
 
@@ -334,14 +346,7 @@ namespace NAudio.Wave
                 }
 
                 // Call the convertor
-                unsafe
-                {
-                    // TODO : check if it's better to lock the buffer at initialization?
-                    fixed (void* pBuffer = &waveBuffer[0])
-                    {
-                        convertor(new IntPtr(pBuffer), outputChannels, NumberOfOutputChannels, nbSamples);
-                    }
-                }
+                convertor(_waveBufferPtr, outputChannels, NumberOfOutputChannels, nbSamples);
 
                 if (read == 0)
                 {

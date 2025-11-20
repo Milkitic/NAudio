@@ -39,7 +39,7 @@ public sealed class FloatTo24LSBSampleConverter : SampleConverterBase
     {
         float* inputSamples = (float*)inputInterleavedBuffer;
 
-        byte*[] samples = new byte*[nbChannels];
+        byte** samples = stackalloc byte*[nbChannels];
         for (int i = 0; i < nbChannels; i++)
         {
             samples[i] = (byte*)asioOutputBuffers[i];
