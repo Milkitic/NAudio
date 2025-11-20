@@ -1,4 +1,5 @@
 ﻿using System;
+using static NAudio.Asio.SampleConverters.SampleConverter;
 
 namespace NAudio.Wave.Asio
 {
@@ -148,19 +149,8 @@ namespace NAudio.Wave.Asio
         /// </summary>
         public static void ConvertorFloatToInt2Channels(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
-            unsafe
-            {
-                float* inputSamples = (float*)inputInterleavedBuffer;
-                int* leftSamples = (int*)asioOutputBuffers[0];
-                int* rightSamples = (int*)asioOutputBuffers[1];
-
-                for (int i = 0; i < nbSamples; i++)
-                {
-                    *leftSamples++ = clampToInt(inputSamples[0]);
-                    *rightSamples++ = clampToInt(inputSamples[1]);
-                    inputSamples += 2;
-                }
-            }
+            NAudio.Asio.SampleConverters.FloatToIntSampleConverter.Instance
+                .Convert2Channels(inputInterleavedBuffer, asioOutputBuffers, nbSamples);
         }
 
         /// <summary>
@@ -168,23 +158,8 @@ namespace NAudio.Wave.Asio
         /// </summary>
         public static void ConvertorFloatToIntGeneric(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
-            unsafe
-            {
-                float* inputSamples = (float*)inputInterleavedBuffer;
-                int*[] samples = new int*[nbChannels];
-                for (int i = 0; i < nbChannels; i++)
-                {
-                    samples[i] = (int*)asioOutputBuffers[i];
-                }
-
-                for (int i = 0; i < nbSamples; i++)
-                {
-                    for (int j = 0; j < nbChannels; j++)
-                    {
-                        *samples[j]++ = clampToInt(*inputSamples++);
-                    }
-                }
-            }
+            NAudio.Asio.SampleConverters.FloatToIntSampleConverter.Instance
+                .ConvertGeneric(inputInterleavedBuffer, asioOutputBuffers, nbChannels, nbSamples);
         }
 
         /// <summary>
@@ -443,24 +418,6 @@ namespace NAudio.Wave.Asio
                     }
                 }
             }
-        }
-
-        private static int clampTo24Bit(double sampleValue)
-        {
-            sampleValue = (sampleValue < -1.0) ? -1.0 : (sampleValue > 1.0) ? 1.0 : sampleValue;
-            return (int)(sampleValue * 8388607.0);
-        }
-
-        private static int clampToInt(double sampleValue)
-        {
-            sampleValue = (sampleValue < -1.0) ? -1.0 : (sampleValue > 1.0) ? 1.0 : sampleValue;
-            return (int)(sampleValue * 2147483647.0);
-        }
-
-        private static short clampToShort(double sampleValue)
-        {
-            sampleValue = (sampleValue < -1.0) ? -1.0 : (sampleValue > 1.0) ? 1.0 : sampleValue;
-            return (short)(sampleValue * 32767.0);
         }
     }
 }
