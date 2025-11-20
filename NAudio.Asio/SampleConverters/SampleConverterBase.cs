@@ -4,12 +4,12 @@ using System.Runtime.Intrinsics;
 
 namespace NAudio.Asio.SampleConverters;
 
-public abstract class SampleConverter
+public abstract class SampleConverterBase
 {
     protected static readonly Vector256<float> VMin;
     protected static readonly Vector256<float> VMax;
 
-    static SampleConverter()
+    static SampleConverterBase()
     {
         if (!Vector256.IsHardwareAccelerated) return;
         VMin = Vector256.Create(-1.0f);

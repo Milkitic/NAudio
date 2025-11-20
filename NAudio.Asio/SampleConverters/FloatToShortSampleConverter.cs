@@ -1,19 +1,19 @@
-﻿using System;
+using System;
 using System.Runtime.Intrinsics;
 
 namespace NAudio.Asio.SampleConverters;
 
-public sealed class FloatToIntSampleConverter : SampleConverterBase
+public sealed class FloatToShortSampleConverter : SampleConverterBase
 {
     private static readonly Vector256<float> VScale;
     private static readonly Vector256<int> VShuffleMask;
 
-    static FloatToIntSampleConverter()
+    static FloatToShortSampleConverter()
     {
         if (!Vector256.IsHardwareAccelerated) return;
 
-        // 缩放因子: 2147483647.0f
-        VScale = Vector256.Create(2147483647.0f);
+        // 缩放因子: 32767.0f
+        VScale = Vector256.Create(32767.0f);
         // 重排掩码
         // 输入: [L0, R0, L1, R1, L2, R2, L3, R3]
         // 目标: [L0, L1, L2, L3, R0, R1, R2, R3]
@@ -21,18 +21,18 @@ public sealed class FloatToIntSampleConverter : SampleConverterBase
         VShuffleMask = Vector256.Create(0, 2, 4, 6, 1, 3, 5, 7);
     }
 
-    private FloatToIntSampleConverter()
+    private FloatToShortSampleConverter()
     {
     }
 
-    public static FloatToIntSampleConverter Instance { get; } = new();
+    public static FloatToShortSampleConverter Instance { get; } = new();
 
     public override unsafe void Convert2Channels(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers,
         int nbSamples)
     {
         float* inputSamples = (float*)inputInterleavedBuffer;
-        int* leftSamples = (int*)asioOutputBuffers[0];
-        int* rightSamples = (int*)asioOutputBuffers[1];
+        short* leftSamples = (short*)asioOutputBuffers[0];
+        short* rightSamples = (short*)asioOutputBuffers[1];
 
         int i = 0;
 
@@ -48,16 +48,24 @@ public sealed class FloatToIntSampleConverter : SampleConverterBase
                 // Clamp (Min/Max)
                 Vector256<float> vClamped = Vector256.Min(Vector256.Max(vSrc, VMin), VMax);
 
-                // 乘法缩放并转换为 Int (截断)
+                // 缩放到 short 的量化范围
                 Vector256<int> vInts = Vector256.ConvertToInt32(vClamped * VScale);
 
                 // 重排，将 L 和 R 分离到同一个寄存器的两端
                 // [L0, L1, L2, L3 | R0, R1, R2, R3]
                 Vector256<int> vOrdered = Vector256.Shuffle(vInts, VShuffleMask);
 
-                // 写入
-                vOrdered.GetLower().Store(leftSamples); // 低128位 (L0-L3) 写入左声道
-                vOrdered.GetUpper().Store(rightSamples); // 高128位 (R0-R3) 写入右声道
+                // 写入（按元素写入，保持与标量路径一致的舍入/截断行为）
+                var l = vOrdered.GetLower();
+                var r = vOrdered.GetUpper();
+                leftSamples[0] = (short)l.GetElement(0);
+                leftSamples[1] = (short)l.GetElement(1);
+                leftSamples[2] = (short)l.GetElement(2);
+                leftSamples[3] = (short)l.GetElement(3);
+                rightSamples[0] = (short)r.GetElement(0);
+                rightSamples[1] = (short)r.GetElement(1);
+                rightSamples[2] = (short)r.GetElement(2);
+                rightSamples[3] = (short)r.GetElement(3);
 
                 inputSamples += (vectorSize * 2);
                 leftSamples += vectorSize;
@@ -68,8 +76,8 @@ public sealed class FloatToIntSampleConverter : SampleConverterBase
 
         for (; i < nbSamples; i++)
         {
-            *leftSamples++ = clampToInt(inputSamples[0]);
-            *rightSamples++ = clampToInt(inputSamples[1]);
+            *leftSamples++ = clampToShort(inputSamples[0]);
+            *rightSamples++ = clampToShort(inputSamples[1]);
             inputSamples += 2;
         }
     }
@@ -78,17 +86,17 @@ public sealed class FloatToIntSampleConverter : SampleConverterBase
         int nbChannels, int nbSamples)
     {
         float* inputSamples = (float*)inputInterleavedBuffer;
-        int*[] samples = new int*[nbChannels];
+        short*[] samples = new short*[nbChannels];
         for (int i = 0; i < nbChannels; i++)
         {
-            samples[i] = (int*)asioOutputBuffers[i];
+            samples[i] = (short*)asioOutputBuffers[i];
         }
 
         for (int i = 0; i < nbSamples; i++)
         {
             for (int j = 0; j < nbChannels; j++)
             {
-                *samples[j]++ = clampToInt(*inputSamples++);
+                *samples[j]++ = clampToShort(*inputSamples++);
             }
         }
     }
