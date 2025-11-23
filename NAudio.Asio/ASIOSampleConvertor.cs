@@ -1,5 +1,5 @@
 ﻿using System;
-using static NAudio.Asio.SampleConverters.SampleConverterBase;
+using System.Runtime.CompilerServices;
 
 namespace NAudio.Wave.Asio
 {
@@ -91,6 +91,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Optimized convertor for 2 channels SHORT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorShortToInt2Channels(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.ShortToIntSampleConverter.Instance
@@ -100,6 +101,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Generic convertor for SHORT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorShortToIntGeneric(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.ShortToIntSampleConverter.Instance
@@ -109,6 +111,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Optimized convertor for 2 channels FLOAT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorFloatToInt2Channels(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.FloatToIntSampleConverter.Instance
@@ -118,6 +121,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Generic convertor Float to INT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorFloatToIntGeneric(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.FloatToIntSampleConverter.Instance
@@ -127,6 +131,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Optimized convertor for 2 channels INT to INT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorIntToInt2Channels(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.IntToIntSampleConverter.Instance
@@ -136,6 +141,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Generic convertor INT to INT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorIntToIntGeneric(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.IntToIntSampleConverter.Instance
@@ -145,6 +151,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Optimized convertor for 2 channels INT to SHORT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorIntToShort2Channels(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.IntToShortSampleConverter.Instance
@@ -154,6 +161,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Generic convertor INT to SHORT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorIntToShortGeneric(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.IntToShortSampleConverter.Instance
@@ -163,6 +171,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Generic convertor INT to FLOAT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorIntToFloatGeneric(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.IntToFloatSampleConverter.Instance
@@ -172,6 +181,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Optimized convertor for 2 channels SHORT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorShortToShort2Channels(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.ShortToShortSampleConverter.Instance
@@ -181,6 +191,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Generic convertor for SHORT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorShortToShortGeneric(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.ShortToShortSampleConverter.Instance
@@ -190,6 +201,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Optimized convertor for 2 channels FLOAT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorFloatToShort2Channels(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.FloatToShortSampleConverter.Instance
@@ -199,6 +211,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Generic convertor SHORT
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConvertorFloatToShortGeneric(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.FloatToShortSampleConverter.Instance
@@ -208,6 +221,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Generic converter 24 LSB
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConverterFloatTo24LSBGeneric(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.FloatTo24LSBSampleConverter.Instance
@@ -217,6 +231,7 @@ namespace NAudio.Wave.Asio
         /// <summary>
         /// Generic convertor for float
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ConverterFloatToFloatGeneric(IntPtr inputInterleavedBuffer, IntPtr[] asioOutputBuffers, int nbChannels, int nbSamples)
         {
             NAudio.Asio.SampleConverters.FloatToFloatSampleConverter.Instance
