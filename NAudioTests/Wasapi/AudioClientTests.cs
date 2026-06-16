@@ -5,6 +5,7 @@ using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System.Diagnostics;
 using NAudioTests.Utils;
+using System.Runtime.InteropServices;
 
 namespace NAudioTests.Wasapi
 {
@@ -38,19 +39,26 @@ namespace NAudioTests.Wasapi
             {
                 WaveFormat waveFormat = new WaveFormat(48000, 16, 2); //audioClient.MixFormat;
                 long refTimesPerSecond = 10000000;
-                audioClient.Initialize(AudioClientShareMode.Exclusive,
-                    AudioClientStreamFlags.None,
-                    refTimesPerSecond / 10,
-                    0,
-                    waveFormat,
-                    Guid.Empty);
+                try 
+                    {
+                    audioClient.Initialize(AudioClientShareMode.Exclusive,
+                        AudioClientStreamFlags.None,
+                        refTimesPerSecond / 10,
+                        0,
+                        waveFormat,
+                        Guid.Empty);
+                }
+                catch (COMException ex) when (ex.ErrorCode == unchecked((int)0x8889000A)) // AUDCLNT_E_DEVICE_IN_USE
+                {
+                    Assert.Ignore("Can't open exclusive mode at the moment as device is in use");
+                }
             }
         }
 
         [Test]
         public void CanGetAudioRenderClient()
         {
-            Assert.IsNotNull(InitializeClient(AudioClientShareMode.Shared).AudioRenderClient);
+            Assert.That(InitializeClient(AudioClientShareMode.Shared).AudioRenderClient, Is.Not.Null);
         }
 
 
@@ -85,7 +93,7 @@ namespace NAudioTests.Wasapi
         {
             AudioClient client = GetAudioClient();
             WaveFormat defaultFormat = client.MixFormat;
-            Assert.IsTrue(client.IsFormatSupported(AudioClientShareMode.Shared, defaultFormat), "Is Format Supported");
+            Assert.That(client.IsFormatSupported(AudioClientShareMode.Shared, defaultFormat), Is.True, "Is Format Supported");
         }
 
         /* strange as this may seem, WASAPI doesn't seem to like the default format in exclusive mode
@@ -218,7 +226,7 @@ namespace NAudioTests.Wasapi
             MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
             MMDevice defaultAudioEndpoint = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
             AudioClient audioClient = defaultAudioEndpoint.AudioClient;
-            Assert.IsNotNull(audioClient);
+            Assert.That(audioClient, Is.Not.Null);
             return audioClient;
         }
     

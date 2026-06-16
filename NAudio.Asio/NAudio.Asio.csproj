@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net8.0-windows</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>2.2.1-modified</Version>
+    <Version>2.3.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile Condition="$(Configuration)=='Release'">true</GenerateDocumentationFile>
     <Authors>Mark Heath, Milki</Authors>
@@ -12,14 +12,18 @@
     <PackageProjectUrl>https://github.com/naudio/NAudio</PackageProjectUrl>
     <PackageTags>C# .NET audio sound</PackageTags>
     <RepositoryUrl>https://github.com/naudio/NAudio</RepositoryUrl>
-    <Copyright>© Mark Heath 2023</Copyright>
+    <Copyright>© Mark Heath 2026</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>naudio-icon.png</PackageIcon>
     <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NAudio.Core" Version="2.2.1" />
+    <ProjectReference Include="..\NAudio.Core\NAudio.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,5 +32,5 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-  
+
 </Project>
